@@ -92,13 +92,13 @@
     let spawnInterval = 2.0;
     let lastSpawnTime = 0;
     
-    // added a deep ruby red so obstacles can pick it up too
-    const crystalColors = [
-      0x84f7fd,
-      0x64acff,
-      0xa864ff,
-      0x45caff,
-      0xff0040
+    // Handy palette of gem-like colors: ruby, diamond, emerald, sapphire, citrine
+    const gemColors = [
+      0xff0040, // ruby
+      0xf0f0f0, // diamond (very pale grey)
+      0x00dc82, // emerald
+      0x0080ff, // sapphire
+      0xffbf00  // citrine
     ];
     
     let envObjects = [];
@@ -258,7 +258,7 @@
 
       for (let i = 0; i < 16; i++) {
         const size = 0.03 + Math.random()*0.06;
-        const color = crystalColors[Math.floor(Math.random()*crystalColors.length)];
+        const color = gemColors[Math.floor(Math.random()*gemColors.length)];
         const crys = createCrystalMesh(size, color);
         const side = Math.random()>0.5?1:-1;
         crys.position.set(side*0.6 + (Math.random()*0.2*side), -0.08 + size/2, -2 - i*0.6);
@@ -273,15 +273,15 @@
       const geom = new THREE.IcosahedronGeometry(size, 0);
       const mat = new THREE.MeshPhysicalMaterial({
         color,
-        roughness: 0.1,
-        metalness: 0.2,
-        transmission: 0.8,
-        thickness: size*2,
+        roughness: 0.05,
+        metalness: 0.1,
+        transmission: 1.0,
+        thickness: size * 1.5,
         clearcoat: 1.0,
-        clearcoatRoughness: 0.1,
+        clearcoatRoughness: 0.0,
         envMapIntensity: 1.5,
         emissive: color,
-        emissiveIntensity: 0.3
+        emissiveIntensity: 0.2
       });
       const mesh = new THREE.Mesh(geom, mat);
       mesh.castShadow = true;
@@ -317,7 +317,7 @@
         const p = new THREE.Mesh(
           new THREE.SphereGeometry(0.01 + Math.random()*0.02, 8, 8),
           new THREE.MeshBasicMaterial({
-            color: crystalColors[Math.floor(Math.random()*crystalColors.length)],
+            color: gemColors[Math.floor(Math.random()*gemColors.length)],
             transparent: true,
             opacity: 0.6
           })
@@ -352,22 +352,20 @@
     function spawnObstacle() {
       const lane = Math.floor(Math.random()*3);
       const grp = new THREE.Group();
-      const color = crystalColors[Math.floor(Math.random()*crystalColors.length)];
+      const color = gemColors[Math.floor(Math.random()*gemColors.length)];
       const mat = new THREE.MeshPhysicalMaterial({
         color,
         roughness: 0.05,
-        metalness: 0.0,
+        metalness: 0.1,
         transmission: 1.0,
-        thickness: 0.7,
+        thickness: 1.0,
         clearcoat: 1.0,
         clearcoatRoughness: 0.0,
-        envMapIntensity: 2.0,
-        ior: 2.4,
+        envMapIntensity: 1.5,
         emissive: color,
-        emissiveIntensity: 0.1
+        emissiveIntensity: 0.4
       });
-      // a touch more subdivision for extra facets
-      const mesh = new THREE.Mesh(new THREE.OctahedronGeometry(0.15, 1), mat);
+      const mesh = new THREE.Mesh(new THREE.OctahedronGeometry(0.15, 0), mat);
       mesh.castShadow = true;
       grp.add(mesh);
       grp.add(new THREE.PointLight(color, 1.5, 0.4));
